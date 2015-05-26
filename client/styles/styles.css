@@ -89,3 +89,7 @@ form input[type=text] {
     border-radius: 2px;
     color: white;
 }
+
+#messages span {
+    background-color: red;
+}
