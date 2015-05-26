@@ -90,10 +90,17 @@ form input[type=text] {
     color: white;
 }
 
+.all {
+    margin: 10px;
+}
+
 #messages span {
-    background-color: red;
+    background-color: #888;
+    padding: 3px;
+    border-radius: 2px;
 }
 
 .bold {
     font-weight: bold;
+    color: white;
 }

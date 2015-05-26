@@ -24,11 +24,9 @@ $(document).ready(function(){
           updateRooms(room);
 
           if(currentRoom === room || currentRoom === 'all') {
-            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span>' +
-            ' Message: '+ message + ' Room: ' + room + '</div>');
+            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span> ' + message + ' Room: ' + room + '</div>');
           } else {
-            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span>' +
-            ' Message: '+ message + ' Room: ' + room + '</div>').hide();
+            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span> ' + message + ' Room: ' + room + '</div>').hide();
           }
         }
       }
