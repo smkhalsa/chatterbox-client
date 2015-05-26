@@ -73,7 +73,7 @@ form input[type=text] {
     background-color: #ddd;
 }
 
-.spinner {
+.spinner {  padding: 5px;
     float: right;
     height: 46px;
     margin-bottom: 5px;
@@ -81,4 +81,11 @@ form input[type=text] {
 
 .spinner img {
     padding: 10px;
+}
+
+#submitButton {
+    background-color: #888;
+    padding: 5px;
+    border-radius: 2px;
+    color: white;
 }

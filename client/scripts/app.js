@@ -22,9 +22,8 @@ var data = function() {
 setInterval(data, 1000);
 
 $(document).ready(function(){
-  $('#submitButton').click(function(event){
-    debugger;
-    event.stopDefault();
+  $('#submitButton').click(function(){
+    // debugger;
     var message = {
       'username': name,
       'text': $('#messageInput').val(),
