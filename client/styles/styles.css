@@ -93,3 +93,7 @@ form input[type=text] {
 #messages span {
     background-color: red;
 }
+
+.bold {
+    font-weight: bold;
+}

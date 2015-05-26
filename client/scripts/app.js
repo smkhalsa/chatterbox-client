@@ -24,15 +24,16 @@ $(document).ready(function(){
           updateRooms(room);
 
           if(currentRoom === room || currentRoom === 'all') {
-            $('#messages').prepend('<div class="all '+room+'">' +'<span class="' + user + '">' + user + '</span>' +
+            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span>' +
             ' Message: '+ message + ' Room: ' + room + '</div>');
           } else {
-            $('#messages').prepend('<div class="all '+room+'">' +'<span class="' + user + '">' + user + '</span>' +
+            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span>' +
             ' Message: '+ message + ' Room: ' + room + '</div>').hide();
           }
         }
       }
       requestTime = data.results[0].createdAt;
+      updateFriends();
     });
   };
 
@@ -76,11 +77,24 @@ $(document).ready(function(){
     $('#messages').children().not('.'+ currentRoom).hide();
   });
 
-  $('span').click(function() {
-    debugger;
-  var user = $(this).attr('class');
-  console.log(user);
-    // if(this.)
+  $(document).on('click', 'span', function() {
+    var user = $(this).attr('data');
+    console.log(user);
+    if(friends[user]) {
+      delete friends[user];
+    } else {
+      friends[user] = true;
+    }
+    console.log(friends);
+    updateFriends();
   });
 
+  var updateFriends = function(){
+    $('#messages > .all > span').removeClass('bold');
+    for(var key in friends) {
+      $('#messages > .all > span').filter(function(){
+        return $(this).attr('data') === key;
+      }).addClass('bold');
+    }
+  };
 });
