@@ -9,20 +9,20 @@
     <script src="bower_components/jquery/jquery.min.js"></script>
     <script src="bower_components/underscore/underscore-min.js"></script>
     <!-- your scripts -->
-    <script src="env/config.js"></script>
+    <!-- <script src="env/config.js"></script> -->
     <script src="scripts/app.js"></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
-      <form>
-        <input type="text" id="messageInput" />
-        <span id="submitButton">Submit</span>
+      <form id="messageForm">
+        <input type="text" id="messageInput" autofocus/>
+        <button type="submit" id="submitButton" >Submit</button>
+      <br>Room:
       <select id ="roomSelect">
-        <option class="roomItem" id="allRooms">all</option>
-        <option id="newRoom">--New Room--</option>
       </select>
+      <button id="newRoom" type="button">New Room</button>
       </form>
       <div id="messages"></div>
     </div>

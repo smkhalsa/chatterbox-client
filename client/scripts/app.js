@@ -1,91 +1,44 @@
 // YOUR CODE HERE:
 $(document).ready(function(){
+  var baseURL = 'http://127.0.0.1:3000/';
   var requestTime = '2014-05-25T23:19:10.140Z';
   var roomOptions = {};
   var currentRoom = 'all';
   var friends = {};
-  var updateRooms = function(room){
-    if(!roomOptions[room]) {
-      roomOptions[room] = true;
-      $('#roomSelect').append('<option class="roomItem" data="' + room +'">' + room + '</option>');
-    }
-  };
-  var data = function(){
-    $.ajax({
-      url:'https://api.parse.com/1/classes/chatterbox',
-      context: document.body
-    }).done(function(data){
-      for(var i = 0; i < data.results.length; i++) {
-        if(data.results[i].text && data.results[i].username && new Date(data.results[i].createdAt) > new Date(requestTime)
-          && data.results[i].roomname) {
-          var user = _.escape(data.results[i].username.toString());
-          var message = _.escape(data.results[i].text.toString());
-          var room = _.escape(data.results[i].roomname.toString()).replace(/ /, "_");
-          updateRooms(room);
+  var name = prompt('What is your name?') || 'anonymous';
 
-          if(currentRoom === room || currentRoom === 'all') {
-            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span> ' + message + ' Room: ' + room + '</div>');
-          } else {
-            $('#messages').prepend('<div class="all '+room+'">' +'<span data="' + user + '">' + user + '</span> ' + message + ' Room: ' + room + '</div>').hide();
-          }
-        }
-      }
-      requestTime = data.results[0].createdAt;
+
+  var getMessages = function(){
+    $.ajax({
+      url: baseURL + (currentRoom === "all" ? 'messages' : 'rooms/' + currentRoom),
+      type: 'GET',
+      context: document.body
+    }).done(function(results){
+      var data = JSON.parse(results);
+      updateRooms(currentRoom);
+      renderMessages(data);
       updateFriends();
     });
   };
 
-// data();
-  setInterval(data, 1000);
+  setInterval(getMessages, 1000);
 
-  $('#submitButton').click(function(){
-    // debugger;
-    var roomAssignment = $('#roomSelect').val();
-    if(roomAssignment === 'New Room') {
-      roomAssignment = prompt('Create a new room');
+  var renderMessages = function(data) {
+    $('#messages').empty();
+    for(var i = 0; i < data.results.length; i++) {
+      var user = _.escape(data.results[i].username.toString());
+      var message = _.escape(data.results[i].text.toString());
+      $('#messages').prepend('<div class="all">' +'<span data="' + user + '">' + user + '</span> ' + message + '</div>');
     }
-    var message = {
-      'username': name,
-      'text': $('#messageInput').val(),
-      'roomname': roomAssignment
-    };
-    $.ajax({
-      url: 'https://api.parse.com/1/classes/chatterbox',
-      type: 'POST',
-      data: JSON.stringify(message),
-      contentType: 'application/json',
-      success: function (data) {
-        console.log('chatterbox: Message sent');
-      },
-      error: function (data) {
-        console.error('chatterbox: Failed to send message');
-      }
-    });
-  });
+  };
 
-
-  $('#roomSelect').on('change', function(){
-    // $('#messages').hide();
-    // $('.' + $('#roomSelect').val()).show();
-
-
-    currentRoom = $('#roomSelect').val();
-
-    $('#messages').children().filter('.'+ currentRoom).show();
-    $('#messages').children().not('.'+ currentRoom).hide();
-  });
-
-  $(document).on('click', 'span', function() {
-    var user = $(this).attr('data');
-    console.log(user);
-    if(friends[user]) {
-      delete friends[user];
-    } else {
-      friends[user] = true;
+  var updateRooms = function(room){
+    if(!roomOptions[room]) {
+      roomOptions[room] = true;
+      $('#roomSelect').append('<option class="roomItem" data="' + room +'">' + room + '</option>');
+      $('#roomSelect').val(room);
     }
-    console.log(friends);
-    updateFriends();
-  });
+  };
 
   var updateFriends = function(){
     $('#messages > .all > span').removeClass('bold');
@@ -95,4 +48,52 @@ $(document).ready(function(){
       }).addClass('bold');
     }
   };
+
+  $('#messageForm').on('submit', function(e){
+    e.preventDefault();
+    var roomAssignment = $('#roomSelect').val();
+    var message = {
+      'username': name,
+      'text': $('#messageInput').val(),
+      'roomname': roomAssignment,
+      'createdAt': new Date()
+    };
+    $('#messageInput').val('');
+    $.ajax({
+      url: 'http://127.0.0.1:3000/rooms/' + currentRoom,
+      type: 'POST',
+      data: JSON.stringify(message),
+      contentType: 'application/json',
+      success: function (data) {
+        console.log('chatterbox: Message sent');
+        updateRooms(currentRoom);
+
+      },
+      error: function (data) {
+        console.error('chatterbox: Failed to send message');
+      }
+    });
+    $('#messages').prepend('<div class="all">' +'<span data="' + message.username + '">' + message.username + '</span> ' + message.text + '</div>');
+  });
+
+
+  $('#roomSelect').on('change', function(){
+    currentRoom = $('#roomSelect').val();
+  });
+
+  $('#newRoom').click(function(e){
+    currentRoom = prompt('Create a new room!');
+    updateRooms(currentRoom);
+  });
+
+  $(document).on('click', 'span', function() {
+    var user = $(this).attr('data');
+    if(friends[user]) {
+      delete friends[user];
+    } else {
+      friends[user] = true;
+    }
+    updateFriends();
+  });
+
 });
